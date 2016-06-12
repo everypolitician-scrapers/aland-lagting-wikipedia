@@ -24,14 +24,19 @@ def scrape_list(term, url)
     break if party.text.to_s.include? 'Se även'
     ul = party.xpath('following-sibling::h2 | following-sibling::ul').slice_before { |e| e.name != 'ul' }.first.first
     ul.css('li').each do |li|
-      data = { 
-        name: li.at_css('a').text.tidy,
-        wikiname: li.xpath('.//a[not(@class="new")][1]/@title').text,
-        party: party.css('span.mw-headline').text.tidy,
-        party_wikiname: party.xpath('.//span[@class="mw-headline"]/a[not(@class="new")]/@title').text,
-        term: term,
-      }
-      ScraperWiki.save_sqlite([:name, :party, :term], data)
+      expected = li.text.include?('Suppleant') ? 2 : 1
+      links = li.css('a')
+      abort "Unexpected number of people in #{li.text}" unless links.count == expected
+      links.each do |a|
+        data = {
+          name: a.text.tidy,
+          wikiname: a.attr('class') == 'new' ? '' : a.attr('title'),
+          party: party.css('span.mw-headline').text.tidy,
+          party_wikiname: party.xpath('.//span[@class="mw-headline"]/a[not(@class="new")]/@title').text,
+          term: term,
+        }
+        ScraperWiki.save_sqlite([:name, :party, :term], data)
+      end
     end
   end
 end
