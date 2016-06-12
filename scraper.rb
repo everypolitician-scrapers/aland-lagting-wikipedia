@@ -24,6 +24,7 @@ def scrape_list(term, url)
     break if party.text.to_s.include? 'Se även'
     ul = party.xpath('following-sibling::h2 | following-sibling::ul').slice_before { |e| e.name != 'ul' }.first.first
     ul.css('li').each do |li|
+      li.css('sup').remove
       expected = li.text.include?('Suppleant') ? 2 : 1
       links = li.css('a')
       abort "Unexpected number of people in #{li.text}" unless links.count == expected
@@ -41,6 +42,6 @@ def scrape_list(term, url)
   end
 end
 
-scrape_list("2007", 'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_ledam%C3%B6ter_av_%C3%85lands_lagting_2007-2011')
-scrape_list("2011", 'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_ledam%C3%B6ter_av_%C3%85lands_lagting_2011-2015')
 scrape_list("2015", 'https://sv.wikipedia.org/wiki/Lista_över_ledamöter_av_Ålands_lagting_2015–2019')
+scrape_list("2011", 'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_ledam%C3%B6ter_av_%C3%85lands_lagting_2011-2015')
+scrape_list("2007", 'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_ledam%C3%B6ter_av_%C3%85lands_lagting_2007-2011')
