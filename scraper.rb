@@ -15,7 +15,7 @@ class String
 end
 
 def noko_for(url)
-  Nokogiri::HTML(open(url).read)
+  Nokogiri::HTML(open(URI.encode(URI.decode(url))).read)
 end
 
 def scrape_list(term, url)
@@ -38,3 +38,4 @@ end
 
 scrape_list("2007", 'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_ledam%C3%B6ter_av_%C3%85lands_lagting_2007-2011')
 scrape_list("2011", 'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_ledam%C3%B6ter_av_%C3%85lands_lagting_2011-2015')
+scrape_list("2015", 'https://sv.wikipedia.org/wiki/Lista_över_ledamöter_av_Ålands_lagting_2015–2019')
